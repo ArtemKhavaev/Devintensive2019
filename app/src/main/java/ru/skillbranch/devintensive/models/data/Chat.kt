@@ -16,22 +16,19 @@ data class Chat(
     var isArchived: Boolean = false
 ) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun unreadableMessageCount(): Int {
-        //TODO implement me
-        return 0
+    fun unreadableMessageCount(): Int = messages.map{if(!it.isReaded) it}.size
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun lastMessageDate(): Date? = when (val lastMessage = messages.lastOrNull()){
+        null -> null
+        else -> lastMessage.date
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageDate(): Date? {
-        //TODO implement me
-        return Date()
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageShort(): Pair<String, String?>  {
-        //TODO implement me
-        return "Сообщений нет" to "@John_Doe"
-
+    fun lastMessageShort(): Pair<String, String?>  = when(val lmsg = messages.lastOrNull()){
+        is ImageMessage -> "${lmsg.from.firstName} - отправил фото" to lmsg.from.firstName
+        is TextMessage -> lmsg.text!! to lmsg.from.firstName
+        else -> "Сообщений еще нет" to null
     }
 
 
